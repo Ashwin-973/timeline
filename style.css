@@ -9,7 +9,7 @@
 .spacer{
     font-size: 32px;
     display:grid;
-    height:70vh;
+    height:120vh;
     place-content: center;
 }
 
@@ -34,7 +34,7 @@
     height:0%;
     background: linear-gradient(180deg, #3b82f6, #8b5cf6); /* Blue to Purple */
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-    transition:height 500ms ease-in-out;
+    transition:height 10ms ease-in-out;
     z-index:10;
 
 }
