@@ -108,16 +108,16 @@
     display: grid;
     place-content: center;
     opacity:0;
-    transform:translateY(40px);
-    transition:all 400ms ease-in;
+    transform:translateY(20px) scale(0.95);
+    transition:all 600ms ease-in;
 }
 
 .card.show{
     opacity:1;
-    transform: translateY(0px);
+    transform: translateY(0px) scale(1);
 }
 
 .card.fade{
-    opacity:1;
-    transform: translateY(-40px);
+    opacity:0;
+    transform: translateY(-20px) scale(1.05);
 }

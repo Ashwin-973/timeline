@@ -3,6 +3,7 @@
 const triggers=document.querySelectorAll('.track-trigger')
 const cards=document.querySelectorAll('.card')
 const progressBar=document.querySelector('.track-progress')
+const scrollContainer=document.querySelector('.sticky-scroll-container')
 
 const totalTriggers=triggers.length-1
 
@@ -31,11 +32,16 @@ function triggerCallback(entries, observer){
 const updateState=(activeIndex)=>{
 
 
+    //card updation logic
+    cards.forEach((card,idx)=>
+    {
+        card.classList.remove('show','fade');
+        if(idx==activeIndex) card.classList.add('show');
+        else if(idx<activeIndex) card.classList.add('fade')
+    })
 
 
-
-
-    
+    //increase height of progress bar
     const progress= (activeIndex/totalTriggers)*100;
     progressBar.style.height=`${progress}%`
 }
