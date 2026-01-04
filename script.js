@@ -1,6 +1,7 @@
 
 
 const triggers=document.querySelectorAll('.track-trigger')
+const cards=document.querySelectorAll('.card')
 const progressBar=document.querySelector('.track-progress')
 
 const totalTriggers=triggers.length-1
@@ -28,6 +29,13 @@ function triggerCallback(entries, observer){
 }
 
 const updateState=(activeIndex)=>{
+
+
+
+
+
+
+    
     const progress= (activeIndex/totalTriggers)*100;
     progressBar.style.height=`${progress}%`
 }
