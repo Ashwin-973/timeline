@@ -12,3 +12,68 @@
     height:70vh;
     place-content: center;
 }
+
+.sticky-scroll-container{
+    background-color: #1A1110;
+    color:#ffffff;
+    display:grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+}
+
+.track-container{
+    position:relative;
+    border-right:2px solid #3d3d3d;
+
+}
+
+.track-progress{
+    position:absolute;
+    top:0px;
+    right:-2px;
+    width:2px;
+    height:0%;
+    background: linear-gradient(180deg, #3b82f6, #8b5cf6); /* Blue to Purple */
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    transition:height 500ms ease-in-out;
+    z-index:10;
+
+}
+
+.track-progress.active{
+
+}
+
+.track-trigger{
+    padding-inline-end:96px;
+    height:100vh;
+    display:flex;
+    justify-content: flex-end;
+    align-items:center;
+    position:relative;
+}
+
+.track-trigger::after{
+    background-color:#535353;
+    display:block;
+    content:'';
+    position:absolute;
+    top:50%;
+    right:-8px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    transform:translateY(-50%);
+    transition:all 300ms ease;
+    z-index:20;
+}
+
+.track-trigger.active::after{
+    background: #efefef;
+    box-shadow: 0 0 0 4px rgba(250, 250, 250, 0.2);
+    transform: scale(1.5);
+}
+
+.track-content{
+    font-size:32px;
+}
+
