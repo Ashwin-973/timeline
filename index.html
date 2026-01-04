@@ -3,358 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Timeline</title>
-    <style>
-        /* --- RESET & BASICS --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #050505; /* Deep luxury black */
-            color: #ffffff;
-            font-family: 'Inter', system-ui, sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* --- LAYOUT GRID (Desktop) --- */
-        .timeline-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 50% Left, 50% Right */
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* --- LEFT COLUMN: The Triggers --- */
-        .timeline-track {
-            position: relative;
-            padding-bottom: 20vh; /* Extra space at bottom */
-            border-right: 2px solid #222; /* The subtle base line */
-        }
-
-        /* The Moving Gradient Line (Visual Candy) */
-        .timeline-progress-bar {
-            position: absolute;
-            top: 0;
-            right: -2px; /* Overlap the border */
-            width: 2px;
-            height: 0; /* JS will animate this */
-            background: linear-gradient(180deg, #3b82f6, #8b5cf6); /* Blue to Purple */
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            transition: height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-            z-index: 10;
-        }
-
-        .trigger-point {
-            height: 100vh; /* Each section is full screen height to allow scrolling */
-            display: flex;
-            align-items: center;
-            justify-content: flex-end; /* Push text to the line */
-            padding-right: 40px;
-            position: relative;
-        }
-
-        /* The Dots */
-        .trigger-point::after {
-            content: '';
-            position: absolute;
-            right: -6px; /* Center on line */
-            width: 10px;
-            height: 10px;
-            background: #333;
-            border-radius: 50%;
-            border: 2px solid #000;
-            transition: all 0.4s ease;
-            z-index: 20;
-        }
-
-        .trigger-point.active::after {
-            background: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-            transform: scale(1.5);
-        }
-
-        .date-label {
-            font-size: 3rem;
-            font-weight: 800;
-            opacity: 0.3;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .trigger-point.active .date-label {
-            opacity: 1;
-            transform: translateX(-10px);
-            background: linear-gradient(to right, #fff, #aaa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* --- RIGHT COLUMN: The Sticky Stage --- */
-        .content-stage {
-            height: 100vh;
-            position: sticky; /* THE MAGIC */
-            top: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            overflow: hidden; /* Hide cards sliding out */
-        }
-
-        .card-stack {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 600px; /* Fixed height for the visual container */
-        }
-
-        .info-card {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 24px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            
-            /* Cinematic Transition Defaults (Hidden State) */
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            transition: 
-                opacity 0.6s ease, 
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: none; /* Ignore clicks when hidden */
-        }
-
-        /* Active State for Card */
-        .info-card.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: all;
-            z-index: 5;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-color: #444;
-        }
-
-        /* Previous cards fade out and go up slightly */
-        .info-card.prev {
-            opacity: 0;
-            transform: translateY(-40px) scale(1.05);
-        }
-
-        /* --- CONTENT STYLING --- */
-        .card-image {
-            width: 100%;
-            height: 200px;
-            background: #222;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            object-fit: cover;
-        }
-        h3 { font-size: 1.5rem; margin-bottom: 10px; }
-        p { color: #888; line-height: 1.6; }
-        .btn {
-            padding: 12px 24px;
-            background: white;
-            color: black;
-            border-radius: 30px;
-            border: none;
-            font-weight: bold;
-            width: max-content;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        /* --- MOBILE RESPONSIVENESS (The Senior "Reflow") --- */
-        @media (max-width: 768px) {
-            .timeline-container {
-                display: block; /* Disable grid */
-                padding: 20px;
-            }
-
-            .timeline-track {
-                border-right: none;
-                border-left: 2px solid #222; /* Move line to left */
-                padding-bottom: 0;
-                padding-left: 20px;
-                margin-left: 10px;
-            }
-            
-            .timeline-progress-bar {
-                right: auto;
-                left: -2px; /* Move highlight to left */
-            }
-
-            .trigger-point {
-                height: auto; /* Kill the 100vh spacer */
-                display: block; /* Normal block flow */
-                padding: 0;
-                margin-bottom: 40px;
-                text-align: left;
-            }
-
-            .trigger-point::after {
-                right: auto;
-                left: -26px; /* Align dot to left line */
-                top: 15px; /* Visual tweak */
-            }
-
-            .date-label {
-                font-size: 2rem;
-                margin-bottom: 15px;
-                opacity: 1; /* Always visible on mobile */
-            }
-
-            .content-stage {
-                height: auto;
-                position: static; /* Kill Sticky */
-                display: block;
-                padding: 0;
-            }
-
-            .card-stack {
-                height: auto;
-                max-width: 100%;
-            }
-
-            .info-card {
-                position: relative; /* Normal Flow */
-                opacity: 1;
-                transform: none;
-                margin-bottom: 40px;
-                height: auto;
-                pointer-events: all;
-            }
-            
-            /* Hide the visual "Stacking" logic on mobile */
-            .info-card.prev, .info-card.active {
-                transform: none;
-                opacity: 1;
-            }
-        }
-    </style>
+    <title>Overlay Sticky Pattern</title>
+    <link href="style.css" rel="stylesheet"/>
+    <script src="script.js"></script>
 </head>
 <body>
+    <div class="spacer">Start</div>
+    <main>
+        <section class="sticky-scroll-container">
 
-    <div style="height: 50vh; display:grid; place-items:center;">
-        <h1>Scroll Down ↓</h1>
-    </div>
+            <aside class="track-container">
+                <div class="track-progress" ></div>
+                <div class="track-trigger" data-index="0">
+                    <span class="track-content"></span>
+                </div>
+                <div class="track-trigger" data-index="1">
+                    <span class="track-content"></span>
+                </div>
+                <div class="track-trigger" data-index="2">
+                    <span class="track-content"></span>
+                </div>
+                <div class="track-trigger" data-index="3">
+                    <span class="track-content"></span>
+                </div>
+            </aside>
 
-    <main class="timeline-container">
-        
-        <aside class="timeline-track">
-            <div class="timeline-progress-bar" id="progressBar"></div>
-
-            <div class="trigger-point" data-index="0">
-                <span class="date-label">2024</span>
+            <div class="card-container">
+                <div class="sticky-viewport-wrappr">
+                    <div class="card">Card 1</div>
+                    <div class="card">Card 2</div>
+                    <div class="card">Card 3</div>
+                    <div class="card">Card 4</div>
+                </div>
             </div>
             
-            <div class="trigger-point" data-index="1">
-                <span class="date-label">Late 2023</span>
-            </div>
-
-            <div class="trigger-point" data-index="2">
-                <span class="date-label">Early 2023</span>
-            </div>
-
-            <div class="trigger-point" data-index="3">
-                <span class="date-label">2022</span>
-            </div>
-        </aside>
-
-        <section class="content-stage">
-            <div class="card-stack">
-                
-                <article class="info-card active">
-                    <div style="background: linear-gradient(45deg, #3b82f6, #1d4ed8);" class="card-image"></div>
-                    <h3>Global Launch</h3>
-                    <p>We expanded our operations to 40 new countries, implementing localized payment gateways and support teams.</p>
-                    <button class="btn">Read Report</button>
-                </article>
-
-                <article class="info-card">
-                    <div style="background: linear-gradient(45deg, #8b5cf6, #6d28d9);" class="card-image"></div>
-                    <h3>Series B Funding</h3>
-                    <p>Secured $50M in Series B funding led by major venture capital firms to accelerate AI research.</p>
-                    <button class="btn">Press Release</button>
-                </article>
-
-                <article class="info-card">
-                    <div style="background: linear-gradient(45deg, #ec4899, #be185d);" class="card-image"></div>
-                    <h3>The Pivot</h3>
-                    <p>Shifted focus from consumer hardware to enterprise software solutions, resulting in 200% growth.</p>
-                    <button class="btn">Our Story</button>
-                </article>
-
-                <article class="info-card">
-                    <div style="background: linear-gradient(45deg, #10b981, #047857);" class="card-image"></div>
-                    <h3>Inception</h3>
-                    <p>Started in a garage with a single idea: simplify the complex web infrastructure for everyone.</p>
-                    <button class="btn">About Founders</button>
-                </article>
-
-            </div>
         </section>
-
     </main>
-
-    <div style="height: 50vh;"></div>
-
-    <script>
-        // SENIOR DEV PATTERN: Separation of concerns & Performance
-        
-        const triggers = document.querySelectorAll('.trigger-point');
-        const cards = document.querySelectorAll('.info-card');
-        const progressBar = document.getElementById('progressBar');
-        
-        // 1. Threshold Setup
-        // We want the event to fire when the date crosses the middle of the screen (50%)
-        const options = {
-            root: null, // viewport
-            rootMargin: '-50% 0px -50% 0px', // Create a 1px "line" in the middle of screen
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const index = entry.target.getAttribute('data-index');
-                    updateState(index);
-                }
-            });
-        }, options);
-
-        triggers.forEach(trigger => observer.observe(trigger));
-
-        function updateState(activeIndex) {
-            // Update Cards (The Cinematic Swap)
-            cards.forEach((card, i) => {
-                card.classList.remove('active', 'prev');
-                
-                if (i == activeIndex) {
-                    card.classList.add('active'); // Current gets focus
-                } else if (i < activeIndex) {
-                    card.classList.add('prev'); // Past cards float up
-                }
-                // Future cards stay hidden at bottom
-            });
-
-            // Update Triggers (The Date Label)
-            triggers.forEach((trigger, i) => {
-                trigger.classList.toggle('active', i == activeIndex);
-            });
-
-            // Update Progress Line Height
-            // We calculate percentage based on active index vs total
-            const total = triggers.length - 1;
-            // Simple math for the beam length: (Index / Total) * 100%
-            // But we limit it inside the container height in CSS visually
-            const progress = (activeIndex / total) * 100;
-            progressBar.style.height = `${progress}%`;
-        }
-    </script>
+    <div class="spacer">End</div>
 </body>
 </html>

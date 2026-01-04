@@ -1,0 +1,14 @@
+*{
+    box-sizing: border-box;
+    margin : 0px;
+    padding:0px;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
+
+.spacer{
+    font-size: 32px;
+    display:grid;
+    height:70vh;
+    place-content: center;
+}
