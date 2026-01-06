@@ -61,7 +61,7 @@ function triggerCallback(entries, observer){
         if(entry.isIntersecting){
             const activeIndex=entry.target.getAttribute('data-index');
             const trackContent=document.querySelector(`[data-index="${activeIndex}"] .track-content`)
-            trackContent.classList.toggle("active",entry.isIntersecting)
+            // trackContent.classList.toggle("active",entry.isIntersecting)
             updateState(activeIndex)
             
         }
@@ -123,12 +123,10 @@ const cardCallback=(entries,observer)=>
 
 const cardObserver=new IntersectionObserver(cardCallback,cardOptions)
 
-if(!viewportWidth>640){
     cards.forEach((card)=>
     {
         cardObserver.observe(card)
     })
-}
 
 
 
