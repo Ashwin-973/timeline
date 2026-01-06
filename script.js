@@ -56,12 +56,16 @@ function triggerCallback(entries, observer){
     entries.forEach((entry) => {
 
         entry.target.classList.toggle('active', entry.isIntersecting);
+        
 
         if(entry.isIntersecting){
             const activeIndex=entry.target.getAttribute('data-index');
+            const trackContent=document.querySelector(`[data-index="${activeIndex}"] .track-content`)
+            trackContent.classList.toggle("active",entry.isIntersecting)
             updateState(activeIndex)
             
         }
+
         
     })
 
@@ -79,6 +83,7 @@ const updateState=(activeIndex)=>{
         if(idx==activeIndex) card.classList.add('show');
         else if(idx<activeIndex) card.classList.add('fade')
     })
+
 
 }
 
@@ -108,7 +113,6 @@ const cardCallback=(entries,observer)=>
         triggerDot.classList.toggle('active',entry.isIntersecting)
         // entry.target.classList.toggle("fade",!entry.isIntersecting)
         const trackContent=document.querySelector(`[data-index="${activeIndex}"] .track-content`)
-        console.log(trackContent)
         trackContent.classList.toggle("active",entry.isIntersecting)
     })
 }
