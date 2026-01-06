@@ -7,10 +7,12 @@ const scrollContainer=document.querySelector('.sticky-scroll-container')
 
 const totalTriggers=triggers.length-1
 
-let maxScrollHeight;
+let maxScrollHeight,viewportWidth;
 
 const calcScrollDimensions=()=>{
     maxScrollHeight=scrollContainer.offsetHeight - window.innerHeight;
+
+    viewportWidth=window.innerWidth;
 }
 
 const calcProgress=()=>
@@ -51,6 +53,8 @@ function triggerCallback(entries, observer){
 }
 
 const updateState=(activeIndex)=>{
+
+    if(viewportWidth<640) return;
 
 
     //card updation logic
