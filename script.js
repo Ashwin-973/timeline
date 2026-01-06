@@ -13,11 +13,15 @@ const calcScrollDimensions=()=>{
     maxScrollHeight=scrollContainer.offsetHeight - window.innerHeight;
 
     viewportWidth=window.innerWidth;
-    // if(viewportWidth<640){
-    //     prog
-    // }
+    //the reset when screen size changes
+    if(viewportWidth<640){
+        progressBar.style.height="2px";
+    }
+    else{
+        progressBar.style.width="2px";
 
-    console.log(viewportWidth)
+    }
+
 }
 
 const calcProgress=()=>
