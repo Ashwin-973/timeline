@@ -13,6 +13,11 @@ const calcScrollDimensions=()=>{
     maxScrollHeight=scrollContainer.offsetHeight - window.innerHeight;
 
     viewportWidth=window.innerWidth;
+    // if(viewportWidth<640){
+    //     prog
+    // }
+
+    console.log(viewportWidth)
 }
 
 const calcProgress=()=>
@@ -23,11 +28,17 @@ const calcProgress=()=>
     if(scrolled<0) return;
 
     if(scrolled>maxScrollHeight) scrolled=maxScrollHeight
-    console.log(scrolled)
 
     //increase height of progress bar
     const progress=(scrolled/maxScrollHeight)*100;
-    progressBar.style.height=`${progress}%`
+
+    if(viewportWidth<640){
+        progressBar.style.width=`${progress}%`
+
+    }
+    else{
+        progressBar.style.height=`${progress}%`
+    }
 
 }
 
@@ -73,6 +84,48 @@ const triggerObserver = new IntersectionObserver(triggerCallback, options)
 triggers.forEach((trigger)=>{
     triggerObserver.observe(trigger)
 })
+
+/*------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+
+const cardOptions={
+    rootMargin:'-50% 0% -50% 0%'
+}
+
+
+const cardCallback=(entries,observer)=>
+{
+    console.log(entries)
+    entries.forEach((entry)=>
+    {
+        const activeIndex=entry.target.getAttribute('data-card-index')
+        const triggerDot=document.querySelector(`[data-index="${activeIndex}"]`)
+        triggerDot.classList.toggle('active',entry.isIntersecting)
+        // entry.target.classList.toggle("fade",!entry.isIntersecting)
+        const trackContent=document.querySelector(`[data-index="${activeIndex}"] .track-content`)
+        console.log(trackContent)
+        trackContent.classList.toggle("active",entry.isIntersecting)
+    })
+}
+
+
+
+
+
+const cardObserver=new IntersectionObserver(cardCallback,cardOptions)
+
+if(!viewportWidth>640){
+    cards.forEach((card)=>
+    {
+        cardObserver.observe(card)
+    })
+}
+
+
+
+
+
 
 calcScrollDimensions()
 
